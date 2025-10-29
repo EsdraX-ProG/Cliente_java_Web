@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset-UTF-8" pageEncoding="UTF-8"%>
-
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix ="c" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,29 +14,52 @@
         <a href="clientes?acao=criar"> Cadastro Cliente</a>
     </div>
     <div>
+        <c:choose>
+            <c:when test="${empty clientes}">
+                <p> nehum cliente cadastrado, clique em "Novo cliente" para adicionar
+            </c:when>
+
+            <c:otherwise>
+
+
         <table>
             <tr>
                 <td>ID</td>
-                <td>Nome</td>
-                <td>Email</td>
-                <td>Telefone</td>
+
+                <td>NOME</td>
+
+                <td>EMAIL</td>
+
+                <td>TELEFONE</td>
+
                 <td>CPF</td>
-                <td>endereco</td>
+
+                <td>ENDEREÇO</td>
+
                 <td>Acoes</td>
             </tr>
             <tbody>
+            <c:forEach var = "cliente" items="${clientes}">
                 <tr>
-                <td>1</td>
-                <td>Julia</td>
-                <td>Julia@gmaail.com</td>
-                <td>11 998323-2323</td>
-                <td> 391.971.468-70</td>
-                <td>R. Direita</td>
-                <td><a href="">Delete</a> </td>
+                <td>${cliente.id}</td>
+                <td>${cliente.nome}</td>
+                <td>${cliente.email}</td>
+                <td>${cliente.telefone}</td>
+                <td>${cliente.cpf}</td>
+                <td>${cliente.endereco}</td>
 
+                <td>
+                <a href"/clente?acao=editar&id=${cliente.id}">EDITAR</a>
+
+                <td><a href="/clientes?acao=deletar&id=${cliente.id}"
+                onclick="return confirm('Tem certeza que deseja excluir esse cliente?')"
+                >DELETE</a></td>
                 </tr>
+            </c:forEach>
             </tbody>
         </table>
+        </c:otherwise>
+        </c:choose>
     </div>
 
 </body>
