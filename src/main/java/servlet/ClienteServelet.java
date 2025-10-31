@@ -1,5 +1,6 @@
 package servlet;
 
+import database.dao.ClienteDAO;
 import model.Cliente;
 
 import javax.servlet.ServletException;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,8 @@ import java.util.List;
 public class ClienteServelet extends HttpServlet {
 
     private int id = 1;
+
+    private ClienteDAO clienteDAO = new ClienteDAO();
 
 
     //Lista com valor dinamico
@@ -30,16 +34,25 @@ public class ClienteServelet extends HttpServlet {
 
                 switch(acao){
                     case "listar":
-                        req.setAttribute("clientes", clientes);
+                        try {
 
+                            List<Cliente> clienteDB = clienteDAO.listaTodos();
+                            req.setAttribute("clientes", clienteDB);
+                        }catch (SQLException e){
+                            System.out.println("Erro ao listar clientes");
+                            throw new  RuntimeException(e);
+
+                        }
                         req.getRequestDispatcher("/listaClientes.jsp").forward(req, resp);
                         break;
                     case "criar":
                         req.getRequestDispatcher("/criarCliente.jsp").forward(req, resp);
                         break;
-
+                    case "editar":
+                        editarCliente(req, resp);
+                        break;
                     case "deletar":
-                    deletarCliente(req, resp);
+                        deletarCliente(req, resp);
                         break;
                 }
     }
@@ -51,19 +64,15 @@ public class ClienteServelet extends HttpServlet {
         if (acao == null){
             acao = "inserir";
         }
-
         switch (acao){
             case "inserir":
-
                 inserirCliente(req, resp);
                 break;
-
-            case "atualiozar":
+            case "atualizar":
+                atualizarCliente(req, resp);
                 break;
-
         }
     }
-
     private  void inserirCliente(HttpServletRequest req, HttpServletResponse resp) throws IOException{
         //pega os valores enviados do formulario
         String nome = req.getParameter("nome");
@@ -73,12 +82,17 @@ public class ClienteServelet extends HttpServlet {
         String endereco = req.getParameter("endereco");
 
         // Cria o cliente
-        Cliente cliente = new Cliente (id, nome, email, telefone, cpf, endereco);
-        id++;
-        // Salva o cliente na lista
-        clientes.add(cliente);
+        Cliente cliente = new Cliente ( nome, email, telefone, cpf, endereco);
+        try {
 
-        resp.sendRedirect("/clientes?acao=listar");
+            clienteDAO.inserir(cliente);
+            resp.sendRedirect("/clientes?acao=listar");
+
+        }catch(SQLException e){
+            System.out.println("Erro ao inserir cliente");
+            throw new RuntimeException(e);
+
+        }
 
     }
 
@@ -91,7 +105,7 @@ public class ClienteServelet extends HttpServlet {
         resp.sendRedirect("/clientes?acao=listar");
 
     }
-    private void editarCliente(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void editarCliente(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String idCliente = req.getParameter("id");
         int id = Integer.parseInt(idCliente);
 
@@ -100,12 +114,34 @@ public class ClienteServelet extends HttpServlet {
                 .filter(c -> c.getId() == id)
                 .findFirst()
                 .orElse(null);
+
         if (cliente == null) {
             //se nao encontrar o cliente retorna para pagina da listagem
             resp.sendRedirect("/cliente?acao=listar");
+            return;
         }
-        req.setAttribute("cliente" , cliente);
-        req.getRequestDispatcher("/criarCliente.jsp");
 
+        req.setAttribute("cliente", cliente);
+        req.getRequestDispatcher("/criarCliente.jsp").forward(req, resp);
+    }
+        private void atualizarCliente(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+            String nome = req.getParameter("nome");
+            String email = req.getParameter("email");
+            String telefone = req.getParameter("telefone");
+            String cpf = req.getParameter("cpf");
+            String endereco = req.getParameter("endereco");
+            String IdCliente = req.getParameter("id");
+
+            int id = Integer.parseInt(IdCliente);
+
+            for (int i = 0; i < clientes.size(); i++){
+                if(clientes.get(i).getId() == id){
+                    Cliente atualizado = new Cliente(id, nome, email, telefone, cpf, endereco);
+                    clientes.set(i, atualizado);
+                    break;// parar o for quando atulizar o cliente
+                }
+            }
+            resp.sendRedirect("/clientes?acao=listar");
         }
+
 }

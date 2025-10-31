@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
+    <link rel="stylesheet" href="/css/styles.css"/>
 </head>
 <body>
-    <div>
-        <h1>
+    <div class="container-center">
+        <div class="welcome-box">
+            <h1>
             Sistema de Gerenciamento de Clientes
         </h1>
         <p>Bem-vindo ao Sistema de gestão de clientes</p>
-        <a href="/clientes?acao=listar"> Acessar o sistema</a>
+        <a class="btn btn-primary" href="/clientes?acao=listar"> Acessar o sistema</a>
     </div>
 </body>
 </html>
-<html>

@@ -1,17 +1,18 @@
 <%@ page language="java" contentType="text/html; charset-UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix ="c" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Lista de Clientes</title>
+    <link rel="stylesheet" href="/css/styles.css"/>
 </head>
 <bod>
-    <div>
-        <h1> LIsta de Clientes </h1>
+    <div class="container">
+        <h1> Lista de Clientes </h1>
 
-    <div>
-        <a href="clientes?acao=criar"> Cadastro Cliente</a>
+    <div class="header-actions">
+        <a class="btn btn-primary" href="clientes?acao=criar"> Cadastro Cliente</a>
     </div>
     <div>
         <c:choose>
@@ -24,19 +25,19 @@
 
         <table>
             <tr>
-                <td>ID</td>
+                <th>ID</th>
 
-                <td>NOME</td>
+                <th>NOME</th>
 
-                <td>EMAIL</td>
+                <th>EMAIL</th>
 
-                <td>TELEFONE</td>
+                <th>TELEFONE</th>
 
-                <td>CPF</td>
+                <th>CPF</th>
 
-                <td>ENDEREÇO</td>
+                <th>ENDEREÇO</th>
 
-                <td>Acoes</td>
+                <th>Acoes</th>
             </tr>
             <tbody>
             <c:forEach var = "cliente" items="${clientes}">
@@ -48,10 +49,10 @@
                 <td>${cliente.cpf}</td>
                 <td>${cliente.endereco}</td>
 
-                <td>
-                <a href"/clente?acao=editar&id=${cliente.id}">EDITAR</a>
+                <td class="actions">
+                <a class="btn btn-edit" href="/clientes?acao=editar&id=${cliente.id}">EDITAR</a>
 
-                <td><a href="/clientes?acao=deletar&id=${cliente.id}"
+                <a class="btn btn-delete" href="/clientes?acao=deletar&id=${cliente.id}"
                 onclick="return confirm('Tem certeza que deseja excluir esse cliente?')"
                 >DELETE</a></td>
                 </tr>
