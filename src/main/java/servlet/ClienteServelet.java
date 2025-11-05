@@ -99,8 +99,7 @@ public class ClienteServelet extends HttpServlet {
     private void deletarCliente(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String idCliente = req.getParameter("id");
         int id = Integer.parseInt(idCliente);
-        //procura na lista um elemento que atende a condição , quando achar remove ele
-        clientes.removeIf(cliente -> cliente.getId() == id);
+        clienteDAO.deletar(id);
 
         resp.sendRedirect("/clientes?acao=listar");
 
@@ -109,16 +108,12 @@ public class ClienteServelet extends HttpServlet {
         String idCliente = req.getParameter("id");
         int id = Integer.parseInt(idCliente);
 
-        //buscar o cliente na lista
-        Cliente cliente = clientes.stream()
-                .filter(c -> c.getId() == id)
-                .findFirst()
-                .orElse(null);
+        Cliente cliente = clienteDAO.buscarPorId(id);
+
 
         if (cliente == null) {
             //se nao encontrar o cliente retorna para pagina da listagem
             resp.sendRedirect("/cliente?acao=listar");
-            return;
         }
 
         req.setAttribute("cliente", cliente);
@@ -134,13 +129,9 @@ public class ClienteServelet extends HttpServlet {
 
             int id = Integer.parseInt(IdCliente);
 
-            for (int i = 0; i < clientes.size(); i++){
-                if(clientes.get(i).getId() == id){
-                    Cliente atualizado = new Cliente(id, nome, email, telefone, cpf, endereco);
-                    clientes.set(i, atualizado);
-                    break;// parar o for quando atulizar o cliente
-                }
-            }
+            Cliente cliente = new Cliente(id, nome, email, telefone, cpf, endereco);
+            clienteDAO.atualizar(cliente);
+
             resp.sendRedirect("/clientes?acao=listar");
         }
 
